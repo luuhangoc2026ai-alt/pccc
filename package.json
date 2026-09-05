@@ -1,0 +1,9 @@
+{
+  "name": "pccc-root",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix pccc-web run dev",
+    "build": "npm --prefix pccc-web run build",
+    "install": "npm --prefix pccc-web install"
+  }
+}
