@@ -9,6 +9,7 @@ function App() {
   const [inputQuantity, setInputQuantity] = useState('');
   const [inputPosition, setInputPosition] = useState('');
   const [warning, setWarning] = useState(null);
+  const [dbError, setDbError] = useState(null);
   const [comparing, setComparing] = useState(false);
   const [comparisonResult, setComparisonResult] = useState(null);
   const fileRef = useRef(null);
@@ -19,8 +20,16 @@ function App() {
       .from('stock_scans')
       .select('*')
       .order('created_at', { ascending: false });
-    if (data) setScans(data);
-    if (error) console.error(error);
+    if (data) {
+      setScans(data);
+      setDbError(null);
+    }
+    if (error) {
+      console.error(error);
+      if (error.code === 'PGRST205' || error.message?.includes('schema cache') || error.message?.includes('stock_scans')) {
+        setDbError('Bảng "stock_scans" chưa được tạo trên Supabase. Vui lòng chạy đoạn mã SQL migration trong Supabase SQL Editor.');
+      }
+    }
   };
 
   useEffect(() => {
@@ -42,8 +51,10 @@ function App() {
       { tag_id: inputTagId, quantity: Number(inputQuantity), position: inputPosition }
     ]);
 
-    if (error) console.error(error);
-    else {
+    if (error) {
+      console.error(error);
+      setWarning(`Lỗi lưu vào Supabase: ${error.message || error.details || 'Thao tác thất bại'}`);
+    } else {
       setWarning(null);
       setInputTagId('');
       setInputQuantity('');
@@ -145,6 +156,20 @@ function App() {
           textAlign: 'left'
         }}>
           <strong>⚠️ Lưu ý cấu hình Vercel:</strong> Chưa thiết lập biến môi trường <code>VITE_SUPABASE_URL</code> và <code>VITE_SUPABASE_ANON_KEY</code>. Vui lòng thêm hai biến này trong phần <em>Vercel Project Settings &gt; Environment Variables</em> để ứng dụng kết nối với Supabase.
+        </div>
+      )}
+
+      {dbError && (
+        <div style={{
+          backgroundColor: '#f8d7da',
+          color: '#721c24',
+          padding: '12px 16px',
+          borderRadius: '6px',
+          marginBottom: '20px',
+          border: '1px solid #f5c6cb',
+          textAlign: 'left'
+        }}>
+          <strong>⚠️ Cơ sở dữ liệu:</strong> {dbError}
         </div>
       )}
 
