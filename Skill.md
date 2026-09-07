@@ -85,3 +85,34 @@ All skills and implementation logic must be based on existing codebase analysis,
 3. "Logic" section describes the algorithm/pattern used
 4. "No hallucination" confirms skills are grounded in code/requirements
 5. "Skills Not Acquired" explicitly states out-of-scope items to prevent scope creep
+### 7. Floating Dynamic Scanner & Web Audio Synthesizer
+- **Basis**: Requirement for "máy scan giao diện nổi trên thanh động và nổi trên màn hình chính máy scan khi chọn"
+- **Implementation**:
+  - Created `FloatingScannerBar.jsx`: A docked glassmorphism quick-scan bar with fast inputs and last-scanned preview chip.
+  - Created `ScannerModal.jsx`: An elevated full-screen/modal scanning station with laser animation, auto-focus, rapid gun scan mode, and instant lookup against 8,844 system balances.
+  - Created `sound.js`: Synthesizes instant industrial beep/buzzer sounds using Web Audio API (`AudioContext`) without external audio assets.
+  - **No hallucination**: Fully implemented in `src/components/FloatingScannerBar.jsx`, `ScannerModal.jsx`, and `src/lib/sound.js`.
+
+### 8. Floating KPI Metrics & Quantity Variance System
+- **Basis**: Requirement for "các thẻ KPI nổi thể hiện được số lượng chênh lệch giữa hệ thống và thực tế scan được"
+- **Implementation**:
+  - Created `FloatingKPIs.jsx` with 5 elevated cards: System Stock, Actual Scanned, Net Quantity Variance (Δ), Discrepancy Alerts, and Inventory Accuracy Rate.
+  - Dynamically calculates variance: `totalVarianceQty = totalScannedQty - totalMatchedExpectedQty` with responsive color changing (green for 0 match, red for deficit, amber for surplus).
+  - **No hallucination**: Fully implemented in `src/components/FloatingKPIs.jsx` and dynamic state in `App.jsx`.
+
+### 9. Discrepancy Alert & Quick Reconcile System
+- **Basis**: Requirement for "hiện lên những cảnh báo chênh lệch cần chỉnh sửa"
+- **Implementation**:
+  - Created `DiscrepancyCenter.jsx`: Automatically classifies discrepancies into Quantity Mismatch, Unregistered Tags, and Duplicate Scans.
+  - Interactive comparison cards displaying expected vs scanned quantities with direct "Chỉnh sửa ngay" trigger.
+  - Created `EditModal.jsx`: Modal for adjusting quantities, positions, and inputting adjustment reasons.
+  - **No hallucination**: Fully implemented in `src/components/DiscrepancyCenter.jsx` and `src/components/EditModal.jsx`.
+
+### 10. TagID Audit Logging & Traceability
+- **Basis**: Requirement for "có ghi log lại những tagid được chỉnh sửa"
+- **Implementation**:
+  - Created `auditLogger.js`: Captures TagID, action type, old value, new value, delta difference, reason, operator, and timestamp.
+  - Dual storage persistence: Supabase `scan_edit_logs` table + LocalStorage fallback.
+  - Created `AuditLogView.jsx`: Interactive audit log dashboard with search, action filters, and Excel/CSV export.
+  - Added SQL migration file `20260907150000_scan_edit_logs.sql`.
+  - **No hallucination**: Fully implemented in `src/lib/auditLogger.js`, `src/components/AuditLogView.jsx`, and migration files.
